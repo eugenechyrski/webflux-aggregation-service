@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  aggregation-service:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVICES_HOST=http://backend-service:4000
+    depends_on:
+      - backend-service
+
+  backend-service:
+    image: xyzassessment/backend-services
+    ports:
+      - "4000:4000"
+    environment:
+      - SERVER_PORT=4000
+
+
+
+
+

@@ -1,0 +1,23 @@
+Proprietary License Agreement
+
+This software is proprietary and confidential. All rights not expressly granted herein are reserved.
+
+License Grant: Subject to the terms of this Agreement, Yauhen Chyrski grants you a non-exclusive, non-transferable, limited license to use the software solely for accession and evaluation purposes.
+
+Restrictions: You shall not, and shall not permit any third party to:
+
+Copy, reproduce, modify, adapt, create derivative works of, distribute, or publicly display the software.
+Reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code from the software.
+Remove or alter any proprietary notices or labels on the software.
+Ownership: yauhen Chyrski retains all right, title, and interest in and to the software, including all intellectual property rights.
+
+Confidentiality: The software and any related documentation are confidential and proprietary information of Yauhen Chyrski.
+
+Term and Termination: This Agreement is effective until terminated. Yauhen Chyrski may terminate this Agreement immediately upon notice if you breach any provision.
+
+Disclaimer of Warranty: THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, Yauhen Chyrski DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, OR STATUTORY, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+Limitation of Liability: IN NO EVENT SHALL Yauhen Chyrski BE LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES ARISING OUT OF OR IN ANY WAY RELATING TO THE USE OF THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, BUSINESS INTERRUPTION, LOSS OF INFORMATION, OR ANY OTHER PECUNIARY LOSS, EVEN IF Yauhen Chyrski HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Governing Law: This Agreement shall be governed by and construed in accordance with the laws of The Netherlands, excluding its conflicts of law rules.
+
