@@ -18,6 +18,7 @@ public class ResponseCollector<T> {
     private final int expectedCount;
 
     public ResponseCollector(int expectedCount) {
+        LOGGER.debug("Collecter started with expectedCount={}", expectedCount);
         this.expectedCount = expectedCount;
     }
 
@@ -25,10 +26,13 @@ public class ResponseCollector<T> {
         Sinks.EmitResult emitresult = sink.tryEmitNext(rec);
         if (emitresult != Sinks.EmitResult.OK) {
             LOGGER.debug("Request processing error for record {}:{}. Unable to emit  next:{}", rec.getT1(), rec.getT2(), emitresult);
+            LOGGER.debug("Collector complete abnormally expectedCount={}", expectedCount);
+
             sink.tryEmitComplete();
             return;
         }
         if (processed.addAndGet(1) == expectedCount) {
+            LOGGER.debug("Collector complete normally expectedCount={}", expectedCount);
             sink.tryEmitComplete();
         }
     }

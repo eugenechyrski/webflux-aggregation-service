@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class AggregationController {
-
     private final AggregationService aggregationService;
 
     public AggregationController(AggregationService aggregationService) {

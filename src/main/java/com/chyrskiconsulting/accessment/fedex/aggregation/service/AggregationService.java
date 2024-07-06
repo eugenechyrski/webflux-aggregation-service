@@ -4,17 +4,21 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
+import reactor.core.scheduler.Schedulers;
+import reactor.netty.http.client.HttpClient;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
@@ -29,8 +33,14 @@ public class AggregationService {
     private final Sinks.Many<Tuple2<String, ResponseCollector<String>>> trackSink = Sinks.many().multicast().onBackpressureBuffer();
     private final Sinks.Many<Tuple2<String, ResponseCollector<List<String>>>> shipmentsSink = Sinks.many().multicast().onBackpressureBuffer();
 
+    private final ReentrantLock pricingSinkLock = new ReentrantLock();
+    private final ReentrantLock trackSinkLock = new ReentrantLock();
+    private final ReentrantLock shipmentsSinkLock = new ReentrantLock();
+
     public AggregationService(WebClient.Builder webClientBuilder, String baseUrl) {
-        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+        HttpClient client = HttpClient.create()
+                .responseTimeout(Duration.ofMillis(100));
+        this.webClient = webClientBuilder.baseUrl(baseUrl).clientConnector(new ReactorClientHttpConnector(client)).build();
         this.baseUrl = baseUrl;
     }
 
@@ -47,23 +57,34 @@ public class AggregationService {
 
 
     public Mono<Map<String, Optional<List<String>>>> submitShipmentRequest(List<String> data) {
-        return submitRequest(data, shipmentsSink);
+        return submitRequest(data, shipmentsSink, shipmentsSinkLock);
     }
 
     public Mono<Map<String, Optional<String>>> submitTrackRequest(List<String> tracks) {
-        return submitRequest(tracks, trackSink);
+        return submitRequest(tracks, trackSink, trackSinkLock);
     }
 
     public Mono<Map<String, Optional<Double>>> submitPricingRequest(List<String> pricing) {
-        return submitRequest(pricing, pricingSink);
+        return submitRequest(pricing, pricingSink, pricingSinkLock);
     }
 
-    private <T> Mono<Map<String, Optional<T>>> submitRequest(List<String> data, Sinks.Many<Tuple2<String, ResponseCollector<T>>> sink) {
+    private <T> Mono<Map<String, Optional<T>>> submitRequest(List<String> data, Sinks.Many<Tuple2<String, ResponseCollector<T>>> sink, ReentrantLock lock) {
         if (CollectionUtils.isEmpty(data)) {
             return Mono.just(Map.of());
         }
         ResponseCollector<T> request = new ResponseCollector<>(data.size());
-        data.forEach(s -> sink.tryEmitNext(Tuples.of(s, request)));
+        lock.lock();
+        try {
+            for (String elem : data) {
+                Sinks.EmitResult res = sink.tryEmitNext(Tuples.of(elem, request));
+                if (res != Sinks.EmitResult.OK) {
+                    LOGGER.error("Enable to emit into requesting sink: {} {}", elem, res);
+                    request.submit(Tuples.of(elem, Optional.empty()));
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
         return request.asFlux()
                 .collectMap(Tuple2::getT1, Tuple2::getT2)
                 .onErrorResume(throwable -> Mono.just(data.stream().collect(Collectors.toMap(e -> e, e -> Optional.empty()))));
@@ -73,11 +94,14 @@ public class AggregationService {
         sink.asFlux()
                 .bufferTimeout(AGGREGATE_REQUESTS, Duration.ofSeconds(AGGREGATION_TIMEOUT_SEC))
                 .filter(batch -> !batch.isEmpty())
+                .parallel(500).runOn(Schedulers.newParallel(uriTemplate))
                 .flatMap(batch -> {
                     List<Tuple2<String, ResponseCollector<T>>> requests = List.copyOf(batch);
-                    String queries = requests.stream().map(Tuple2::getT1).collect(Collectors.joining(","));
+                    String queries = requests.stream().map(Tuple2::getT1).distinct().collect(Collectors.joining(","));
+                    LOGGER.info("Starting aggregation processing for {}", queries);
                     return webClient.get()
                             .uri(uriTemplate, queries)
+
                             .retrieve()
                             .bodyToMono(responseType)
                             .onErrorResume(this::processOnError)
