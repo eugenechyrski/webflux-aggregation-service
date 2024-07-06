@@ -9,11 +9,11 @@ export let options = {
 };
 export default function () {
 let responses = http.batch([
-        ['GET', 'http://localhost:8080/aggregation?pricing=NL'],
-        ['GET', 'http://localhost:8080/aggregation?pricing=NL'],
-        ['GET', 'http://localhost:8080/aggregation?pricing=NL'],
-        ['GET', 'http://localhost:8080/aggregation?pricing=NL'],
-        ['GET', 'http://localhost:8080/aggregation?pricing=NL'],
+        ['GET', 'http://localhost:8080/aggregation?pricing=NL&track=1&shipments=1'],
+        ['GET', 'http://localhost:8080/aggregation?pricing=UK&track=2&shipments=2'],
+        ['GET', 'http://localhost:8080/aggregation?pricing=US&track=3&shipments=3'],
+        ['GET', 'http://localhost:8080/aggregation?pricing=BA&track=4&shipments=4'],
+        ['GET', 'http://localhost:8080/aggregation?pricing=BB&track=5&shipments=5'],
 
     ])
 

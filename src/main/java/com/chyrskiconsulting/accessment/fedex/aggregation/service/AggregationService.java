@@ -26,6 +26,9 @@ public class AggregationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AggregationService.class);
     private static final int AGGREGATION_TIMEOUT_SEC = 5;
     private static final int AGGREGATE_REQUESTS = 5;
+    private static final int BATCH_PROCESSING_PARALLELISM = 500;
+    private static final Duration MAX_RESPONSE_TIMEOUT_MS = Duration.ofSeconds(5);
+
     private final WebClient webClient;
     private final String baseUrl;
 
@@ -38,8 +41,7 @@ public class AggregationService {
     private final ReentrantLock shipmentsSinkLock = new ReentrantLock();
 
     public AggregationService(WebClient.Builder webClientBuilder, String baseUrl) {
-        HttpClient client = HttpClient.create()
-                .responseTimeout(Duration.ofMillis(100));
+        HttpClient client = HttpClient.create().responseTimeout(MAX_RESPONSE_TIMEOUT_MS);
         this.webClient = webClientBuilder.baseUrl(baseUrl).clientConnector(new ReactorClientHttpConnector(client)).build();
         this.baseUrl = baseUrl;
     }
@@ -94,11 +96,11 @@ public class AggregationService {
         sink.asFlux()
                 .bufferTimeout(AGGREGATE_REQUESTS, Duration.ofSeconds(AGGREGATION_TIMEOUT_SEC))
                 .filter(batch -> !batch.isEmpty())
-                .parallel(500).runOn(Schedulers.newParallel(uriTemplate))
+                .parallel(BATCH_PROCESSING_PARALLELISM).runOn(Schedulers.newParallel(uriTemplate))
                 .flatMap(batch -> {
                     List<Tuple2<String, ResponseCollector<T>>> requests = List.copyOf(batch);
                     String queries = requests.stream().map(Tuple2::getT1).distinct().collect(Collectors.joining(","));
-                    LOGGER.info("Starting aggregation processing for {}", queries);
+                    LOGGER.debug("Starting aggregation processing for {}", queries);
                     return webClient.get()
                             .uri(uriTemplate, queries)
 
