@@ -81,3 +81,7 @@ K6_WEB_DASHBOARD=true k6 run --vus 10 --duration 30s ./load-tests/test.js
 ```
 
 Dashboard is available under http://127.0.0.1:5665
+
+## Performance report
+
+![performance.png](performance.png)
