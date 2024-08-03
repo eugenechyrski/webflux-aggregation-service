@@ -1,4 +1,4 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.model;
+package org.echyrski.aggregation.model;
 
 import java.util.List;
 import java.util.Map;

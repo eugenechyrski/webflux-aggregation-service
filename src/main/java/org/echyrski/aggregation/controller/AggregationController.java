@@ -1,13 +1,12 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.controller;
+package org.echyrski.aggregation.controller;
 
 import java.util.List;
 
+import org.echyrski.aggregation.model.AggregationResponse;
+import org.echyrski.aggregation.service.AggregationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.chyrskiconsulting.accessment.fedex.aggregation.model.AggregationResponse;
-import com.chyrskiconsulting.accessment.fedex.aggregation.service.AggregationService;
 
 import reactor.core.publisher.Mono;
 

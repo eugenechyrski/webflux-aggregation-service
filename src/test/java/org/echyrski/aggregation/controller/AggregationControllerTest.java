@@ -1,17 +1,16 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.controller;
+package org.echyrski.aggregation.controller;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.echyrski.aggregation.model.AggregationResponse;
+import org.echyrski.aggregation.service.AggregationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.chyrskiconsulting.accessment.fedex.aggregation.model.AggregationResponse;
-import com.chyrskiconsulting.accessment.fedex.aggregation.service.AggregationService;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

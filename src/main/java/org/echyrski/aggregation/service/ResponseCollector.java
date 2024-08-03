@@ -1,4 +1,4 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.service;
+package org.echyrski.aggregation.service;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;

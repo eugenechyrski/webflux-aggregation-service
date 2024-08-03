@@ -1,11 +1,10 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.config;
+package org.echyrski.aggregation.config;
 
+import org.echyrski.aggregation.service.AggregationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import com.chyrskiconsulting.accessment.fedex.aggregation.service.AggregationService;
 
 @Configuration
 public class AggregationConfiguration {

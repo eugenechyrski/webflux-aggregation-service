@@ -1,4 +1,4 @@
-package com.chyrskiconsulting.accessment.fedex.aggregation.service;
+package org.echyrski.aggregation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
